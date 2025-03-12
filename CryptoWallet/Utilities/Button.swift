@@ -12,7 +12,7 @@ struct CustomButton: View {
         .font(.system(size: 16, weight: .bold))
         .frame(height: 56)
         .frame(maxWidth: .infinity)
-        .background(vm.isPrimary ? AnyView(LinearGradient.appG1) : AnyView(Color.accentColor.opacity(0.4)))
+        .background(vm.isPrimary ? AnyView(LinearGradient.appG1) : AnyView(Color.accentColor.opacity(0.2)))
         .clipShape(Capsule())
     }
     
