@@ -7,8 +7,11 @@ struct SplashView: View {
   //MARK: - Body
   var body: some View {
     VStack {
-      Text("Splash Screen")
-        .font(.largeTitle)
+      Text("SW")
+        .font(.system(size: 74, weight: .bold))
+        .foregroundStyle(LinearGradient.appG1)
+      Text("crypto wallet".uppercased())
+        .font(.system(size: 18, weight: .semibold))
         .onAppear {
           DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
             withAnimation {
