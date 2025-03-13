@@ -82,7 +82,6 @@ struct FormattedText: View {
     
     return Text(words.first ?? "")
       .font(.system(size: 40))
-      .foregroundStyle(.white)
       .bold()
     + Text(" " + (words.count > 1 ? words[1] : ""))
       .font(.system(size: 40, weight: .bold))
