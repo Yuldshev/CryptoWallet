@@ -2,7 +2,7 @@ import SwiftUI
 
 struct AuthView: View {
   @ObservedObject var appState: AppState
-  @StateObject private var viewModel = RegistrationViewModel()
+  @StateObject private var vm = RegistrationViewModel()
   @FocusState private var focusedField: Field?
   
   var body: some View {
@@ -12,15 +12,15 @@ struct AuthView: View {
         .padding(.top, 47)
       
       VStack(spacing: 20) {
-        CustomTextField(title: "Name", text: $viewModel.name, errorMessage: viewModel.nameError)
+        CustomTextField(title: "Name", text: $vm.name, errorMessage: vm.nameError)
           .focused($focusedField, equals: .name)
           .submitLabel(.next)
           .onSubmit { focusedField = .email }
-        CustomTextField(title: "Email", text: $viewModel.email, errorMessage: viewModel.emailError)
+        CustomTextField(title: "Email", text: $vm.email, errorMessage: vm.emailError)
           .focused($focusedField, equals: .email)
           .submitLabel(.next)
           .onSubmit { focusedField = .password }
-        CustomTextField(title: "Password", text: $viewModel.password, errorMessage: viewModel.passwordError, isSecure: true)
+        CustomTextField(title: "Password", text: $vm.password, errorMessage: vm.passwordError, isSecure: true)
           .focused($focusedField, equals: .password)
           .submitLabel(.done)
           .onSubmit { focusedField = nil }
@@ -28,7 +28,7 @@ struct AuthView: View {
       .padding(.top, 24)
       Spacer()
       CustomButton(vm: ButtonModel(title: "Let's go!", isPrimary: true, action: {
-        if viewModel.register() == true {
+        if vm.register() == true {
           UserDefaults.standard.set(true, forKey: "isAuthenticated")
           appState.checkAppState()
         }

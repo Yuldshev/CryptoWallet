@@ -1,9 +1,10 @@
 import SwiftUI
 
 class RegistrationViewModel: ObservableObject {
-  @Published var name = ""
-  @Published var email = ""
-  @Published var password = ""
+  @AppStorage("name") var name = ""
+  @AppStorage("email") var email = ""
+  @AppStorage("password") var password = ""
+  
   @Published var nameError: String?
   @Published var emailError: String?
   @Published var passwordError: String?
@@ -14,6 +15,19 @@ class RegistrationViewModel: ObservableObject {
       return true
     }
     return false
+  }
+  
+  func logout() {
+    name = ""
+    email = ""
+    password = ""
+    UserDefaults.standard.set(false, forKey: "isAuthenticated")
+  }
+  
+  func saveChanges() {
+    UserDefaults.standard.set(name, forKey: "name")
+    UserDefaults.standard.set(email, forKey: "email")
+    UserDefaults.standard.set(password, forKey: "password")
   }
   
   private func validateFields() {
@@ -31,4 +45,3 @@ class RegistrationViewModel: ObservableObject {
     return password.count >= 8
   }
 }
-

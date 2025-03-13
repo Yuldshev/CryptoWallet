@@ -16,7 +16,7 @@ struct MainView: View {
           AuthView(appState: appState)
             .transition(.blurReplace)
         case .home:
-          HomeView()
+          HomeView(appState: appState)
             .transition(.blurReplace)
       }
     }
@@ -26,7 +26,7 @@ struct MainView: View {
 
 #Preview {
   MainView()
-    .onAppear{ resetUserDefaults() }
+//    .onAppear{ resetUserDefaults() }
 }
 
 @MainActor
