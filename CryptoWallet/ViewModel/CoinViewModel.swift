@@ -8,6 +8,7 @@ class CoinViewModel: ObservableObject {
   @Published var stat: [Stat] = []
   @Published var isLoading = false
   @Published var sortOption: SortOption = .holdings
+  @Published var totalHoldings: Double = 0.0
   
   private let coinDataService = CoinService()
   private let marketDataService = MarketService()
@@ -41,6 +42,12 @@ class CoinViewModel: ObservableObject {
       }
       .store(in: &cancellables)
     
+    $walletCoins
+      .map { walletCoins in
+        walletCoins.reduce(0) { $0 + $1.currentHoldingsValue }
+      }
+      .assign(to: &$totalHoldings)
+    
     marketDataService.$marketData
       .combineLatest($walletCoins)
       .map(mapMarketData)
@@ -49,7 +56,6 @@ class CoinViewModel: ObservableObject {
         self?.isLoading = false
       }
       .store(in: &cancellables)
-    
     
   }
   
@@ -104,8 +110,8 @@ class CoinViewModel: ObservableObject {
   
   private func mapAllCoins(coinModels: [Coin], entity: [Wallet]) -> [Coin] {
     coinModels.compactMap { coin -> Coin? in
-      guard let entity = entity.first(where: { $0.coinID == coin.id }) else {
-        return coin
+      guard let entity = entity.first(where: { $0.coinID == coin.id }), entity.amount > 0 else {
+        return nil
       }
       return coin.updateHoldings(amount: entity.amount)
     }

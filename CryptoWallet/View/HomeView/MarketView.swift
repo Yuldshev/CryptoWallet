@@ -5,12 +5,7 @@ struct MarketView: View {
   
   var body: some View {
     ZStack {
-      Image(.bg)
-        .resizable()
-        .scaledToFit()
-        .edgesIgnoringSafeArea(.all)
-        .opacity(0.7)
-        .offset(x: -90, y: -280)
+      ImageBG()
       
       VStack {
         CoinStatView

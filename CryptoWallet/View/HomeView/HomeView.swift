@@ -11,9 +11,9 @@ struct HomeView: View {
         WalletView()
           .environmentObject(vm)
       }
-      .tabItem {
-        Label("Wallet", systemImage: "wallet.bifold")
-      }
+        .tabItem {
+          Label("Wallet", systemImage: "wallet.bifold")
+        }
       
       NavigationStack {
         MarketView()
