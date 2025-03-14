@@ -2,12 +2,14 @@ import SwiftUI
 
 struct HomeView: View {
   @ObservedObject var appState: AppState
+  @StateObject private var vm = CoinViewModel()
   //Coin model
   
   var body: some View {
     TabView {
       NavigationStack {
         WalletView()
+          .environmentObject(vm)
       }
       .tabItem {
         Label("Wallet", systemImage: "wallet.bifold")
@@ -15,6 +17,7 @@ struct HomeView: View {
       
       NavigationStack {
         MarketView()
+          .environmentObject(vm)
       }
       .tabItem {
         Label("Market", systemImage: "tray")

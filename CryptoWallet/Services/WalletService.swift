@@ -17,7 +17,7 @@ class WalletService {
   }
   
   //MARK: - Public
-  func updatePortfolio(coin: Coin, amount: Double) {
+  func updateWallet(coin: Coin, amount: Double) {
     if let entity = savedEntities.first(where: { $0.coinID == coin.id }) {
       if amount > 0 {
         update(entity: entity, amount: amount)

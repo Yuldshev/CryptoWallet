@@ -3,15 +3,15 @@ import Combine
 
 class CoinViewModel: ObservableObject {
   @Published var allCoins: [Coin] = []
-  @Published var portfolioCoins: [Coin] = []
+  @Published var walletCoins: [Coin] = []
   @Published var searchText = ""
-  @Published var stat: [StatModel] = []
+  @Published var stat: [Stat] = []
   @Published var isLoading = false
   @Published var sortOption: SortOption = .holdings
   
   private let coinDataService = CoinService()
   private let marketDataService = MarketService()
-  private let portfolioDataService = WalletService()
+  private let walletService = WalletService()
   private var cancellables = Set<AnyCancellable>()
   
   enum SortOption {
@@ -33,16 +33,16 @@ class CoinViewModel: ObservableObject {
       .store(in: &cancellables)
     
     $allCoins
-      .combineLatest(portfolioDataService.$savedEntities)
+      .combineLatest(walletService.$savedEntities)
       .map(mapAllCoins)
       .sink { [weak self] coin in
         guard let self = self else { return }
-        self.portfolioCoins = self.sortPortfolioCoins(coin: coin)
+        self.walletCoins = self.sortPortfolioCoins(coin: coin)
       }
       .store(in: &cancellables)
     
     marketDataService.$marketData
-      .combineLatest($portfolioCoins)
+      .combineLatest($walletCoins)
       .map(mapMarketData)
       .sink { [weak self] stats in
         self?.stat = stats
@@ -54,7 +54,7 @@ class CoinViewModel: ObservableObject {
   }
   
   func updatePortfolio(coin: Coin, amount: Double) {
-    portfolioDataService.updatePortfolio(coin: coin, amount: amount)
+    walletService.updateWallet(coin: coin, amount: amount)
   }
   
   func reloadData() {
@@ -111,31 +111,16 @@ class CoinViewModel: ObservableObject {
     }
   }
   
-  private func mapMarketData(market: MarketData?, WalletCoins: [Coin]) -> [StatModel] {
-    var stats: [StatModel] = []
+  private func mapMarketData(market: MarketData?, WalletCoins: [Coin]) -> [Stat] {
+    var stats: [Stat] = []
     
     guard let data = market else { return stats }
     
-    let marketCap = StatModel(title: "Market Cap", value: data.marketCap, percent: data.marketCapChangePercentage24HUsd)
-    let volume = StatModel(title: "24h volume", value: data.volume)
-    let btcDominance = StatModel(title: "BTC Dominance", value: data.btcDominance)
-    
-    let walletValue = WalletCoins
-      .map{ $0.currentHoldingsValue}
-      .reduce(0, +)
-    let previousValue = portfolioCoins
-      .map{ coin -> Double in
-        let currentValue = coin.currentHoldingsValue
-        let percentChange = coin.priceChangePercentage24H ?? 0 / 100
-        let previousValue = currentValue / (1 + percentChange)
-        return previousValue
-      }
-      .reduce(0, +)
-    let percentageChange = ((walletValue - previousValue) / previousValue) * 100
-    
-    let wallet = StatModel(title: "Wallet Value", value: walletValue.asCurrencyDecimals2(), percent: percentageChange)
-    
-    stats.append(contentsOf: [marketCap, volume, btcDominance, wallet])
+    let marketCap = Stat(title: "Market Cap", value: data.marketCap, percent: data.marketCapChangePercentage24HUsd)
+    let volume = Stat(title: "24h volume", value: data.volume)
+    let btcDominance = Stat(title: "BTC Dominance", value: data.btcDominance)
+
+    stats.append(contentsOf: [marketCap, volume, btcDominance])
     return stats
   }
 }
