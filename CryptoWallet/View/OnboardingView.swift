@@ -46,6 +46,25 @@ struct OnboardingView: View {
       )
     }
     .padding(.horizontal, 24)
+    .gesture(
+      DragGesture()
+        .onEnded { value in
+          let threshold: CGFloat = 50
+          if value.translation.width < -threshold {
+            if indicator < onboardingScreens.count - 1 {
+              withAnimation {
+                indicator += 1
+              }
+            }
+          } else if value.translation.width > threshold {
+            if indicator > 0 {
+              withAnimation {
+                indicator -= 1
+              }
+            }
+          }
+        }
+    )
   }
 }
 
