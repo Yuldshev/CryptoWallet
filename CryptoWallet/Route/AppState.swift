@@ -24,6 +24,13 @@ class AppState: ObservableObject {
       }
     }
   }
+  
+  func logout() {
+    UserDefaults.standard.set(false, forKey: "isAuthenticated")
+    withAnimation {
+      currentView = .auth
+    }
+  }
 }
 
 enum AppView {
